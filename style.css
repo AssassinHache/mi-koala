@@ -1,0 +1,828 @@
+/* Reset & Core Setup */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+}
+
+body {
+    font-family: 'Quicksand', sans-serif;
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+    background-color: #03030f;
+    color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    transition: background 1.5s ease;
+}
+
+/* Theme variables */
+:root {
+    --panel-bg: rgba(10, 15, 30, 0.6);
+    --panel-border: rgba(255, 255, 255, 0.12);
+    --text-primary: #ffffff;
+    --text-secondary: #a0aec0;
+    --accent-glow: rgba(100, 200, 255, 0.4);
+    --btn-active: #3182ce;
+}
+
+/* Sky Backgrounds */
+.sky-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    overflow: hidden;
+    transition: background 1.5s ease;
+}
+
+/* Base sky themes represented as gradients */
+.theme-space .sky-background {
+    background: linear-gradient(to bottom, #070919 0%, #0c0f2b 50%, #17123a 100%);
+}
+
+.theme-aurora .sky-background {
+    background: linear-gradient(to bottom, #050e14 0%, #0b1a24 60%, #142a22 100%);
+}
+
+.theme-sunset .sky-background {
+    background: linear-gradient(to bottom, #0d0f26 0%, #201335 40%, #501d43 75%, #8c3b52 100%);
+}
+
+/* Twinkling Stars container */
+.twinkle-stars {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.star {
+    position: absolute;
+    background-color: #fff;
+    border-radius: 50%;
+    animation: twinkle infinite alternate;
+}
+
+@keyframes twinkle {
+    0% { opacity: 0.2; transform: scale(0.8); }
+    100% { opacity: 1; transform: scale(1.2); }
+}
+
+/* Crescent Moon */
+.moon {
+    position: absolute;
+    top: 10%;
+    right: 15%;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    box-shadow: 18px 18px 0 0 #fbfdf9;
+    filter: drop-shadow(0 0 20px rgba(251, 253, 249, 0.55));
+    transition: transform 0.5s ease-out, box-shadow 1.5s ease, filter 1.5s ease;
+    cursor: pointer;
+    z-index: 2;
+}
+
+/* craters inside moon visible through shadows */
+.moon-crater {
+    position: absolute;
+    background: rgba(220, 220, 220, 0.15);
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 1.5s ease;
+}
+
+.theme-sunset .moon {
+    box-shadow: 18px 18px 0 0 #ffeaa7;
+    filter: drop-shadow(0 0 25px rgba(255, 234, 167, 0.45));
+}
+
+.theme-aurora .moon {
+    box-shadow: 18px 18px 0 0 #e8f5e9;
+    filter: drop-shadow(0 0 25px rgba(184, 233, 194, 0.5));
+}
+
+.moon:hover {
+    transform: scale(1.08) rotate(-5deg);
+}
+
+/* Nebula Clouds */
+.nebula {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(90px);
+    opacity: 0.22;
+    pointer-events: none;
+    mix-blend-mode: screen;
+    transition: background 2s ease, opacity 2s ease;
+}
+
+.nebula-1 {
+    top: 15%;
+    left: 20%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, #7d5fff 0%, rgba(125, 95, 255, 0) 70%);
+    animation: floatNebula 25s ease-in-out infinite alternate;
+}
+
+.nebula-2 {
+    bottom: 25%;
+    right: 25%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, #ff5252 0%, rgba(255, 82, 82, 0) 70%);
+    animation: floatNebula 35s ease-in-out infinite alternate-reverse;
+}
+
+/* Shifting Nebulae colors per theme */
+.theme-aurora .nebula-1 {
+    background: radial-gradient(circle, #00d2d3 0%, rgba(0, 210, 211, 0) 70%);
+}
+.theme-aurora .nebula-2 {
+    background: radial-gradient(circle, #1dd1a1 0%, rgba(29, 209, 161, 0) 70%);
+    opacity: 0.3;
+}
+
+.theme-sunset .nebula-1 {
+    background: radial-gradient(circle, #ff9f43 0%, rgba(255, 159, 67, 0) 70%);
+    opacity: 0.25;
+}
+.theme-sunset .nebula-2 {
+    background: radial-gradient(circle, #ee5253 0%, rgba(238, 82, 83, 0) 70%);
+}
+
+@keyframes floatNebula {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(50px, 30px) scale(1.15); }
+}
+
+/* Aurora Layer Details */
+.aurora-layer {
+    position: absolute;
+    top: -10%;
+    left: -20%;
+    width: 140%;
+    height: 80%;
+    background: radial-gradient(ellipse at 50% 30%, rgba(46, 213, 115, 0.3) 0%, rgba(39, 174, 96, 0.1) 40%, rgba(0,0,0,0) 80%);
+    filter: blur(60px);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1.5;
+    transition: opacity 2s ease;
+    mix-blend-mode: color-dodge;
+}
+
+.theme-aurora .aurora-layer {
+    opacity: 1;
+    animation: auroraWave 12s ease-in-out infinite alternate;
+}
+
+@keyframes auroraWave {
+    0% {
+        transform: skewY(-4deg) translateY(0) scaleX(1);
+        filter: blur(60px) hue-rotate(0deg);
+    }
+    50% {
+        transform: skewY(-1deg) translateY(-20px) scaleX(1.1);
+        filter: blur(50px) hue-rotate(20deg);
+    }
+    100% {
+        transform: skewY(-6deg) translateY(10px) scaleX(0.95);
+        filter: blur(70px) hue-rotate(-15deg);
+    }
+}
+
+/* Main Canvas */
+#skyCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    pointer-events: auto; /* Allow drawing/clicking shooting stars */
+}
+
+/* Main Layout & UI */
+.scene-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    pointer-events: none; /* Let clicks pass to canvas underneath except on direct targets */
+}
+
+/* Title Header */
+.header {
+    margin-top: 40px;
+    padding: 0 20px;
+    text-align: center;
+    align-self: center;
+    max-width: 600px;
+    opacity: 0.9;
+    animation: fadeInDown 1.5s ease;
+}
+
+.header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    background: linear-gradient(135deg, #ffffff 60%, #e2e8f0 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.header p {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+/* Ground & Hill Area */
+.ground-container {
+    position: relative;
+    width: 100%;
+    height: 220px;
+    margin-top: auto;
+    pointer-events: auto; /* Interactive area */
+}
+
+.hill-svg {
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+    filter: drop-shadow(0 -5px 15px rgba(10, 18, 44, 0.3));
+}
+
+/* Characters Positioning */
+.characters-container {
+    position: absolute;
+    bottom: 35px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 190px; /* Snug side-by-side layout to hold hands closely */
+    height: 120px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    z-index: 4;
+    gap: 0;
+}
+
+/* Character Base Settings */
+.character {
+    width: 120px;
+    height: 120px;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.character svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
+}
+
+.character:hover {
+    transform: scale(1.04) translateY(-3px);
+}
+
+/* Love Spark (Glowing Heart above their hands) */
+.love-spark {
+    position: absolute;
+    bottom: 22px; /* Positioned right over the hands boundary */
+    left: 50%;
+    transform: translate(-50%, 0) scale(0.8);
+    font-size: 1.15rem;
+    opacity: 0.85;
+    filter: drop-shadow(0 0 4px rgba(255, 71, 87, 0.6));
+    animation: lovePulse 2s ease-in-out infinite alternate;
+    pointer-events: none;
+    z-index: 5;
+    user-select: none;
+}
+
+@keyframes lovePulse {
+    0% {
+        transform: translate(-50%, 0) scale(0.85);
+        opacity: 0.7;
+        filter: drop-shadow(0 0 3px rgba(255, 71, 87, 0.5));
+    }
+    100% {
+        transform: translate(-50%, -6px) scale(1.1);
+        opacity: 1;
+        filter: drop-shadow(0 0 10px rgba(255, 71, 87, 0.95));
+    }
+}
+
+/* Koala Animations (Back View) */
+.koala {
+    animation: koalaBreathe 4s ease-in-out infinite alternate;
+}
+
+.koala-head {
+    transform-origin: 60px 80px;
+    transition: transform 0.5s ease;
+}
+
+.koala-left-ear {
+    transform-origin: 25px 40px;
+    transition: transform 0.5s ease;
+}
+
+.koala-right-ear {
+    transform-origin: 95px 40px;
+    transition: transform 0.5s ease;
+}
+
+.koala-tail {
+    transform-origin: 60px 116px;
+    transition: transform 0.4s ease;
+}
+
+/* Click Active animations for Koala */
+.koala.active-wiggle .koala-left-ear {
+    animation: earWiggleLeft 0.8s ease;
+}
+.koala.active-wiggle .koala-right-ear {
+    animation: earWiggleRight 0.8s ease;
+}
+.koala.active-wiggle .koala-head {
+    animation: headTilt 0.8s ease;
+}
+.koala.active-wiggle .koala-tail {
+    animation: tailWiggle 0.8s ease;
+}
+
+@keyframes earWiggleLeft {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-10deg) translateY(-1px); }
+    50% { transform: rotate(8deg); }
+    75% { transform: rotate(-5deg); }
+}
+
+@keyframes earWiggleRight {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(10deg) translateY(-1px); }
+    50% { transform: rotate(-8deg); }
+    75% { transform: rotate(5deg); }
+}
+
+@keyframes headTilt {
+    0%, 100% { transform: rotate(0deg); }
+    33% { transform: rotate(-4deg); }
+    66% { transform: rotate(4deg); }
+}
+
+@keyframes tailWiggle {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-25deg); }
+    50% { transform: rotate(20deg); }
+    75% { transform: rotate(-15deg); }
+}
+
+@keyframes koalaBreathe {
+    0% {
+        transform: scaleY(1) translateY(0);
+    }
+    100% {
+        transform: scaleY(1.02) translateY(-1px);
+    }
+}
+
+/* Turtle Animations (Back View) */
+.turtle {
+    animation: turtleBreathe 5s ease-in-out infinite alternate-reverse;
+}
+
+.turtle-neck {
+    transform-origin: 60px 78px;
+    transition: transform 0.6s ease;
+}
+
+.turtle-head {
+    transform-origin: 60px 38px;
+    transition: transform 0.6s ease;
+}
+
+/* Click Active animations for Turtle: Tucks head into shell */
+.turtle.active-shy .turtle-head {
+    animation: turtleTuckHead 1.2s ease;
+}
+.turtle.active-shy .turtle-neck {
+    animation: turtleTuckNeck 1.2s ease;
+}
+
+@keyframes turtleTuckHead {
+    0%, 100% { transform: translateY(0); }
+    30%, 70% { transform: translateY(18px) scale(0.88); }
+}
+
+@keyframes turtleTuckNeck {
+    0%, 100% { transform: scaleY(1) translateY(0); }
+    30%, 70% { transform: scaleY(0.2) translateY(8px); }
+}
+
+@keyframes turtleBreathe {
+    0% {
+        transform: scaleX(1) scaleY(1);
+    }
+    100% {
+        transform: scaleX(1.02) scaleY(0.98) translateY(0.5px);
+    }
+}
+
+/* Character Dialogue/Speech Bubbles */
+.click-speech {
+    position: absolute;
+    bottom: 125px;
+    width: 200px;
+    left: 50%;
+    transform: translateX(-50%) scale(0.8);
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 10px 14px;
+    border-radius: 14px;
+    font-size: 0.9rem;
+    line-height: 1.3;
+    text-align: center;
+    color: #fff;
+    opacity: 0;
+    pointer-events: none;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    transition: opacity 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 10;
+}
+
+/* Speech bubble arrows */
+.click-speech::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 8px 8px 0;
+    border-style: solid;
+    border-color: rgba(15, 23, 42, 0.85) transparent;
+    display: block;
+    width: 0;
+}
+
+.character.show-speech .click-speech {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+}
+
+/* Glassmorphism Control Panel */
+.control-panel {
+    position: absolute;
+    bottom: 25px;
+    right: 25px;
+    width: 320px;
+    background: var(--panel-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--panel-border);
+    border-radius: 20px;
+    padding: 16px;
+    box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.4);
+    z-index: 5;
+    pointer-events: auto; /* Capture clicks */
+    animation: fadeInUp 1.2s ease;
+    transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.5s ease, box-shadow 0.3s ease;
+}
+
+.control-panel:hover {
+    box-shadow: 0 15px 45px 0 rgba(0, 0, 0, 0.5), 0 0 15px var(--accent-glow);
+}
+
+.panel-header h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+    letter-spacing: 0.2px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 8px;
+    color: var(--text-primary);
+}
+
+.control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.control-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.theme-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.btn {
+    border: none;
+    outline: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 600;
+    border-radius: 10px;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.theme-btn {
+    flex: 1;
+    padding: 8px 6px;
+    font-size: 0.8rem;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.theme-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: var(--text-primary);
+    transform: translateY(-1px);
+}
+
+.theme-btn.active {
+    background: rgba(255, 255, 255, 0.18);
+    color: var(--text-primary);
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.15);
+}
+
+.control-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.action-row {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+}
+
+.action-row .action-btn {
+    flex: 1;
+    padding: 10px 6px;
+    font-size: 0.82rem;
+}
+
+.action-btn {
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 0.9rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+.primary-btn {
+    background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(108, 92, 231, 0.4);
+}
+
+.primary-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(108, 92, 231, 0.6), 0 0 12px rgba(162, 155, 254, 0.6);
+}
+
+.primary-btn:active {
+    transform: translateY(0);
+}
+
+.secondary-btn {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-primary);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.secondary-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Audio Status Badge */
+.audio-badge {
+    position: absolute;
+    top: 25px;
+    left: 25px;
+    background: rgba(10, 15, 30, 0.55);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--panel-border);
+    border-radius: 30px;
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 5;
+    pointer-events: none;
+    animation: fadeIn 2s ease;
+}
+
+.badge-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #2ed573;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #2ed573;
+    animation: pulse 2s infinite;
+}
+
+/* Keyframes animations */
+@keyframes pulse {
+    0% { opacity: 0.4; box-shadow: 0 0 0 0 rgba(46, 213, 115, 0.7); }
+    70% { opacity: 1; box-shadow: 0 0 0 6px rgba(46, 213, 115, 0); }
+    100% { opacity: 0.4; box-shadow: 0 0 0 0 rgba(46, 213, 115, 0); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .header h1 {
+        font-size: 2rem;
+    }
+    
+    .control-panel {
+        width: calc(100% - 40px);
+        left: 20px;
+        right: 20px;
+        bottom: 20px;
+    }
+
+    .characters-container {
+        bottom: 25px;
+        width: 160px; /* Snug on mobile */
+    }
+
+    .character {
+        width: 100px;
+        height: 100px;
+    }
+
+    .love-spark {
+        bottom: 18px;
+        font-size: 0.95rem;
+    }
+
+    .click-speech {
+        bottom: 110px;
+        width: 170px;
+        font-size: 0.8rem;
+    }
+}
+
+/* Floating Reset Button for Constellation */
+.reset-constellation-btn {
+    position: absolute;
+    bottom: 160px; /* Positioned above characters, centered */
+    left: 50%;
+    transform: translateX(-50%) scale(0.9);
+    background: rgba(20, 15, 30, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 10px 22px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 30px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1s ease, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s ease;
+    z-index: 10;
+}
+
+.reset-constellation-btn.show {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(-50%) scale(1);
+}
+
+.reset-constellation-btn:hover {
+    background: rgba(255, 117, 140, 0.3);
+    border-color: rgba(255, 117, 140, 0.5);
+    transform: translateX(-50%) scale(1.05);
+    box-shadow: 0 0 15px rgba(255, 117, 140, 0.4);
+}
+
+.reset-constellation-btn:active {
+    transform: translateX(-50%) scale(0.98);
+}
+
+/* Collapsible Panel Toggle button (✕) */
+.panel-toggle-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    transition: background 0.3s ease, color 0.3s ease;
+    z-index: 6;
+}
+
+.panel-toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+}
+
+/* Collapsed State for the Control Panel */
+.control-panel.collapsed {
+    transform: translateY(150%) scale(0.92);
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Floating Toggle button to Open the panel (🎛️ Controles) */
+.panel-open-btn {
+    position: absolute;
+    bottom: 25px;
+    right: 25px;
+    background: var(--panel-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--panel-border);
+    color: var(--text-primary);
+    padding: 10px 18px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.8);
+    transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.5s ease;
+    z-index: 5;
+}
+
+.panel-open-btn.show {
+    opacity: 1;
+    pointer-events: auto;
+    transform: scale(1);
+}
+
+.panel-open-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 0 15px var(--accent-glow);
+}

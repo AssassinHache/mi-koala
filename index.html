@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bajo las Estrellas 🐨🐢✨</title>
+    <!-- Google Fonts: Quicksand for a cute, rounded look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="theme-space">
+    <!-- Sky Background Layer -->
+    <div class="sky-background">
+        <!-- Interactive Twinkling Stars (will be populated by JS or CSS) -->
+        <div class="twinkle-stars" id="twinkleStars"></div>
+        
+        <!-- Aurora Effect Layer -->
+        <div class="aurora-layer" id="aurora"></div>
+        
+        <!-- Crescent Moon -->
+        <div class="moon" id="moon">
+            <div class="moon-crater c1"></div>
+            <div class="moon-crater c2"></div>
+            <div class="moon-crater c3"></div>
+        </div>
+
+        <!-- Nebula clouds -->
+        <div class="nebula nebula-1"></div>
+        <div class="nebula nebula-2"></div>
+    </div>
+
+    <!-- Canvas for Shooting Stars and Interactive Particle effects -->
+    <canvas id="skyCanvas"></canvas>
+
+    <!-- Main Scene Container -->
+    <main class="scene-container">
+        
+
+
+        <!-- The Hill and Characters -->
+        <div class="ground-container">
+            <!-- Grassy Hill SVG -->
+            <svg class="hill-svg" viewBox="0 0 1440 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="hillGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stop-color="#1b2a4a" />
+                        <stop offset="100%" stop-color="#0a122c" />
+                    </linearGradient>
+                    <linearGradient id="hillHighlightGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stop-color="#3d5a80" stop-opacity="0.4" />
+                        <stop offset="100%" stop-color="#1b2a4a" stop-opacity="0" />
+                    </linearGradient>
+                </defs>
+                <path d="M0,80 Q360,180 720,100 T1440,120 L1440,200 L0,200 Z" fill="url(#hillGrad)" />
+                <path d="M0,80 Q360,180 720,100 T1440,120 L1440,140 L0,140 Z" fill="url(#hillHighlightGrad)" />
+            </svg>
+
+            <!-- Characters Layer -->
+            <div class="characters-container">
+                
+                <!-- KOALA (From Behind) -->
+                <div class="character koala" id="koalaChar" role="button" aria-label="Koala de espaldas">
+                    <svg viewBox="0 0 120 120" class="koala-svg" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Ears shadow -->
+                        <circle cx="25" cy="40" r="21" fill="#7d889b" />
+                        <circle cx="95" cy="40" r="21" fill="#7d889b" />
+                        
+                        <!-- Ears Main (looking from behind) -->
+                        <circle cx="25" cy="40" r="20" fill="#a4b0be" class="koala-left-ear" />
+                        <circle cx="25" cy="40" r="14" fill="#cbd5e1" class="koala-left-ear" />
+                        
+                        <circle cx="95" cy="40" r="20" fill="#a4b0be" class="koala-right-ear" />
+                        <circle cx="95" cy="40" r="14" fill="#cbd5e1" class="koala-right-ear" />
+                        
+                        <!-- Body (Back) -->
+                        <ellipse cx="60" cy="92" rx="30" ry="28" fill="#a4b0be" />
+                        
+                        <!-- Left Arm (resting) -->
+                        <ellipse cx="34" cy="96" rx="8" ry="14" fill="#7d889b" transform="rotate(20 34 96)" />
+                        
+                        <!-- Right Arm (reaching out to the right boundary to hold hand) -->
+                        <path d="M 85 92 Q 106 95 120 102" stroke="#a4b0be" stroke-width="9" stroke-linecap="round" fill="none" class="koala-hand-arm" />
+
+                        <!-- Head (Back) -->
+                        <ellipse cx="60" cy="55" rx="35" ry="30" fill="#7d889b" />
+                        <ellipse cx="60" cy="53" rx="34" ry="28" fill="#a4b0be" class="koala-head" />
+                        
+                        <!-- Feet (sitting) -->
+                        <ellipse cx="42" cy="114" rx="10" ry="8" fill="#7d889b" />
+                        <ellipse cx="78" cy="114" rx="10" ry="8" fill="#7d889b" />
+
+                        <!-- Cute Tail (Back) -->
+                        <circle cx="60" cy="116" r="8" fill="#cbd5e1" class="koala-tail" />
+                    </svg>
+                    <div class="click-speech" id="koalaSpeech">¡Qué paz se siente aquí arriba...! 🐨</div>
+                </div>
+
+                <!-- Hand holding Love Spark -->
+                <div class="love-spark" id="loveSpark" title="Amistad">❤️</div>
+
+                <!-- TURTLE (From Behind) -->
+                <div class="character turtle" id="turtleChar" role="button" aria-label="Tortuga de espaldas">
+                    <svg viewBox="0 0 120 120" class="turtle-svg" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <radialGradient id="turtleShellGrad" cx="50%" cy="40%" r="60%">
+                                <stop offset="0%" stop-color="#4ecb71" />
+                                <stop offset="70%" stop-color="#26af5c" />
+                                <stop offset="100%" stop-color="#155f32" />
+                            </radialGradient>
+                        </defs>
+                        
+                        <!-- Back Flippers / Legs -->
+                        <path d="M 32 108 C 20 110, 18 118, 28 120 C 38 120, 42 112, 32 108 Z" fill="#1e7e34" />
+                        <path d="M 88 108 C 100 110, 102 118, 92 120 C 82 120, 78 112, 88 108 Z" fill="#155f32" />
+                        
+                        <!-- Tail -->
+                        <path d="M 60 112 L 60 122 Q 60 124 62 122" stroke="#155f32" stroke-width="4.5" stroke-linecap="round" fill="none" class="turtle-tail" />
+
+                        <!-- Main Shell (Back view) -->
+                        <!-- Rim / Marginal Scutes (outer layer) -->
+                        <ellipse cx="60" cy="92" rx="35" ry="29" fill="#1b4d22" />
+                        <!-- Inner Shell Body with gradient -->
+                        <ellipse cx="60" cy="92" rx="33" ry="27" fill="url(#turtleShellGrad)" />
+                        
+                        <!-- Shell Hexagonal Patterns (Scutes) -->
+                        <!-- Center column scutes -->
+                        <path d="M 60 76 L 70 81 L 70 93 L 60 98 L 50 93 L 50 81 Z" fill="none" stroke="#0f3c1a" stroke-width="1.5" stroke-linejoin="round" opacity="0.85" />
+                        <path d="M 60 98 L 70 103 L 70 112 L 60 117 L 50 112 L 50 103 Z" fill="none" stroke="#0f3c1a" stroke-width="1.5" stroke-linejoin="round" opacity="0.85" />
+                        <path d="M 60 76 L 68 71 L 68 66 L 60 65 L 52 66 L 52 71 Z" fill="none" stroke="#0f3c1a" stroke-width="1.5" stroke-linejoin="round" opacity="0.85" />
+                        
+                        <!-- Lateral connecting lines (Pleural scutes) -->
+                        <path d="M 50 81 L 28 82 M 70 81 L 92 82" stroke="#0f3c1a" stroke-width="1.5" opacity="0.85" />
+                        <path d="M 50 93 L 26 94 M 70 93 L 94 94" stroke="#0f3c1a" stroke-width="1.5" opacity="0.85" />
+                        <path d="M 50 112 L 35 112 M 70 112 L 85 112" stroke="#0f3c1a" stroke-width="1.5" opacity="0.85" />
+                        <path d="M 52 71 L 34 73 M 68 71 L 86 73" stroke="#0f3c1a" stroke-width="1.5" opacity="0.85" />
+
+                        <!-- Right arm/flipper (resting) -->
+                        <path d="M 85 91 C 96 93, 108 97, 114 104 C 110 108, 98 108, 85 97 Z" fill="#26af5c" />
+
+                        <!-- Left arm/flipper (reaching out to hold hand) -->
+                        <path d="M 35 91 C 24 93, 12 97, 0 102 C 4 107, 16 107, 35 97 Z" fill="#2ed573" class="turtle-hand-arm" />
+
+                        <!-- Neck with wrinkles -->
+                        <path d="M 60 78 Q 60 56 60 46" stroke="#2ed573" stroke-width="10" stroke-linecap="round" fill="none" class="turtle-neck" />
+                        <line x1="56" y1="62" x2="64" y2="62" stroke="#1b4d22" stroke-width="1" opacity="0.7" />
+                        <line x1="55" y1="69" x2="65" y2="69" stroke="#1b4d22" stroke-width="1" opacity="0.7" />
+
+                        <!-- Head (Back, looking up) -->
+                        <ellipse cx="60" cy="38" rx="11" ry="14" fill="#2ed573" class="turtle-head" />
+                    </svg>
+                    <div class="click-speech" id="turtleSpeech">El caparazón se siente calientito a tu lado... 🐢</div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Glassmorphism Floating Control Panel -->
+    <div class="control-panel" id="controlPanel">
+        <button class="panel-toggle-btn" id="panelToggleBtn" title="Minimizar controles">✕</button>
+        <div class="panel-header">
+            <h3>Controles Estelares</h3>
+        </div>
+        <div class="panel-body">
+            <!-- Theme selectors -->
+            <div class="control-group">
+                <span class="control-label">Cielo:</span>
+                <div class="theme-buttons">
+                    <button class="btn theme-btn active" data-theme="space" title="Espacio Profundo">🌌 Espacio</button>
+                    <button class="btn theme-btn" data-theme="aurora" title="Aurora Mágica">💚 Aurora</button>
+                    <button class="btn theme-btn" data-theme="sunset" title="Atardecer Cósmico">🌇 Ocaso</button>
+                </div>
+            </div>
+
+            <div class="control-actions">
+                <!-- Shooting Star button -->
+                <button class="btn action-btn primary-btn" id="wishBtn">
+                    <span class="btn-icon">✨</span> Pedir un Deseo
+                </button>
+                
+                <div class="action-row">
+                    <!-- Audio Synthesis Toggle -->
+                    <button class="btn action-btn secondary-btn" id="audioBtn">
+                        <span class="btn-icon" id="audioIcon">🔈</span> Sonido: OFF
+                    </button>
+                    
+                    <!-- Download Card Button -->
+                    <button class="btn action-btn secondary-btn" id="downloadBtn" title="Descargar Postal de Estrellas">
+                        <span class="btn-icon">📥</span> Descargar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden audio note / instruction (looks like a floating badge) -->
+    <div class="audio-badge" id="audioBadge">
+        <span class="badge-dot"></span> Sonidos nocturnos sintetizados listos
+    </div>
+
+    <!-- Floating Reset Button for Constellation -->
+    <button class="btn reset-constellation-btn" id="resetConstellationBtn">
+        ✨ Dispersar Estrellas
+    </button>
+
+    <!-- Floating Trigger to re-open control panel -->
+    <button class="panel-open-btn" id="panelOpenBtn" title="Mostrar controles">🎛️ Controles</button>
+
+    <script src="script.js"></script>
+</body>
+</html>
