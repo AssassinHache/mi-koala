@@ -687,37 +687,164 @@ body {
 }
 
 /* Responsive adjustments */
+/* Responsive adjustments */
 @media (max-width: 768px) {
+    /* 1. Header adjustment */
     .header h1 {
-        font-size: 2rem;
+        font-size: 1.8rem;
     }
     
-    .control-panel {
-        width: calc(100% - 40px);
-        left: 20px;
-        right: 20px;
-        bottom: 20px;
+    /* 2. Crescent Moon scaled down for mobile screens */
+    .moon {
+        width: 50px;
+        height: 50px;
+        top: 5%;
+        right: 10%;
+        box-shadow: 12px 12px 0 0 #fbfdf9;
+        filter: drop-shadow(0 0 15px rgba(251, 253, 249, 0.45));
+    }
+    
+    .theme-sunset .moon {
+        box-shadow: 12px 12px 0 0 #ffeaa7;
+        filter: drop-shadow(0 0 15px rgba(255, 234, 167, 0.4));
+    }
+    
+    .theme-aurora .moon {
+        box-shadow: 12px 12px 0 0 #e8f5e9;
+        filter: drop-shadow(0 0 15px rgba(184, 233, 194, 0.45));
     }
 
+    /* 3. Responsive Ground / Hill Height */
+    .ground-container {
+        height: 160px; /* Shorter ground container on mobile */
+    }
+
+    /* 4. Responsive Characters sizing (prevents overlap/clipping) */
     .characters-container {
-        bottom: 25px;
-        width: 160px; /* Snug on mobile */
+        bottom: 20px;
+        width: 130px; /* Keep them snug so they hold hands */
+        height: 80px;
     }
 
     .character {
-        width: 100px;
-        height: 100px;
+        width: 80px;
+        height: 80px;
     }
 
     .love-spark {
-        bottom: 18px;
-        font-size: 0.95rem;
+        bottom: 14px;
+        font-size: 0.8rem;
     }
 
     .click-speech {
-        bottom: 110px;
-        width: 170px;
+        bottom: 95px;
+        width: 150px;
+        font-size: 0.75rem;
+        padding: 8px 10px;
+    }
+    
+    /* 5. Mobile Side Drawer Control Panel (keeps characters/canvas visible) */
+    .control-panel {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: auto;
+        width: 290px;
+        height: 100%;
+        height: 100dvh;
+        border-radius: 20px 0 0 20px;
+        margin: 0;
+        box-shadow: -10px 0 35px rgba(0, 0, 0, 0.6);
+        z-index: 100;
+        overflow-y: auto;
+        transform: translateX(0); /* Fully open when visible */
+        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+    }
+
+    /* Slides out to the right when collapsed */
+    .control-panel.collapsed {
+        transform: translateX(100%);
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    /* 6. Compact Round Floating Action Button (FAB) for mobile */
+    .open-btn-text {
+        display: none; /* Hide 'Controles' text to save space */
+    }
+    
+    .panel-open-btn {
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 1.25rem;
+        bottom: 20px;
+        right: 20px;
+        z-index: 90;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+}
+
+/* Landscape / Ultra-short screens optimization */
+@media (max-height: 480px) {
+    .ground-container {
+        height: 120px;
+    }
+
+    .characters-container {
+        bottom: 15px;
+        width: 110px;
+        height: 70px;
+    }
+
+    .character {
+        width: 70px;
+        height: 70px;
+    }
+
+    .love-spark {
+        bottom: 12px;
+        font-size: 0.75rem;
+    }
+
+    .click-speech {
+        bottom: 80px;
+        width: 140px;
+        font-size: 0.7rem;
+        padding: 6px 8px;
+    }
+    
+    .control-panel {
+        width: 260px;
+        padding: 12px;
+    }
+
+    .control-panel h3 {
+        margin-bottom: 8px;
+        font-size: 1rem;
+    }
+
+    .control-group {
+        margin-bottom: 10px;
+    }
+    
+    .theme-btn {
+        padding: 6px 4px;
+        font-size: 0.75rem;
+    }
+    
+    .action-btn {
+        padding: 8px 10px;
         font-size: 0.8rem;
+    }
+    
+    .action-row .action-btn {
+        padding: 8px 4px;
     }
 }
 

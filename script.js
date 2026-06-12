@@ -567,18 +567,31 @@ function getTextCoordinates() {
     
     // Use the full window width to prevent left/right clipping on mobile!
     const boxWidth = width;
-    const boxHeight = 240;
+    
+    // Scale boxHeight based on screen height to avoid overlapping characters/ground
+    let boxHeight = 240;
+    if (height < 450) {
+        boxHeight = 130; // Shorter on landscape screens
+    } else if (height < 600) {
+        boxHeight = 180; // Shorter on smaller vertical screens
+    }
     
     tempCanvas.width = boxWidth;
     tempCanvas.height = boxHeight;
     
-    // Dynamically scale font size based on screen width
-    // Desktop: 72px. Mobile: 3 lines of 40px bold text.
+    // Dynamically scale font size based on screen width and height
     let fontSize = 72;
     if (width < 480) {
-        fontSize = Math.min(40, Math.floor(width * 0.11)); // Giant bold text on mobile!
+        fontSize = Math.min(36, Math.floor(width * 0.10)); // Prevent text overlaps
     } else if (width < 768) {
-        fontSize = 54; // Mid-scale tablets
+        fontSize = 52;
+    }
+    
+    // Height adjustments for small/landscape screens
+    if (height < 450) {
+        fontSize = Math.min(fontSize, 26);
+    } else if (height < 600) {
+        fontSize = Math.min(fontSize, 38);
     }
     
     tempCtx.font = `bold ${fontSize}px sans-serif`;
@@ -587,13 +600,14 @@ function getTextCoordinates() {
     tempCtx.textBaseline = 'middle';
     
     // Draw centered text lines
-    if (width < 480) {
-        // 3 lines for mobile to prevent clipping and allow massive font size
+    // If it's a very short (landscape) screen, use 2 lines even if width is narrow
+    if (width < 480 && height >= 450) {
+        // 3 lines for mobile portrait
         tempCtx.fillText("feliz", boxWidth / 2, boxHeight * 0.22);
         tempCtx.fillText("aniversario", boxWidth / 2, boxHeight * 0.50);
         tempCtx.fillText("mi koala", boxWidth / 2, boxHeight * 0.78);
     } else {
-        // 2 lines for desktop/tablets
+        // 2 lines for desktop/tablets and landscape mobile
         tempCtx.fillText("feliz aniversario", boxWidth / 2, boxHeight * 0.32);
         tempCtx.fillText("mi koala", boxWidth / 2, boxHeight * 0.68);
     }
@@ -608,7 +622,13 @@ function getTextCoordinates() {
     
     // Bounding offsets in upper sky
     const offsetX = 0;
-    const offsetY = height * 0.08; // Placed at 8% from screen top to fit 3 lines
+    // Push the constellation higher up on short screens to avoid overlapping the hill
+    let offsetY = height * 0.08;
+    if (height < 450) {
+        offsetY = height * 0.03;
+    } else if (height < 600) {
+        offsetY = height * 0.05;
+    }
     
     for (let y = 0; y < boxHeight; y += step) {
         for (let x = 0; x < boxWidth; x += step) {
@@ -905,26 +925,44 @@ async function downloadPostcard() {
             svgToImage(turtleSvg)
         ]);
         
+        // Responsive sizes for postcard export
+        let hillHeight = 200;
+        let containerWidth = 190;
+        let charSize = 120;
+        let bottomOffset = 35;
+        
+        if (width < 768) {
+            if (height < 480) {
+                hillHeight = 120;
+                containerWidth = 110;
+                charSize = 70;
+                bottomOffset = 15;
+            } else {
+                hillHeight = 160;
+                containerWidth = 130;
+                charSize = 80;
+                bottomOffset = 20;
+            }
+        }
+        
         // Draw Hill
-        eCtx.drawImage(hillImg, 0, height - 200, width, 200);
+        eCtx.drawImage(hillImg, 0, height - hillHeight, width, hillHeight);
         
         // Draw Characters Snug together
-        const containerWidth = width < 768 ? 160 : 190;
-        const charSize = width < 768 ? 100 : 120;
         const containerLeft = (width - containerWidth) / 2;
-        const containerTop = height - charSize - (width < 768 ? 25 : 35);
+        const containerTop = height - charSize - bottomOffset;
         
         // Draw Koala
         eCtx.drawImage(koalaImg, containerLeft, containerTop, charSize, charSize);
         
         // Draw Turtle
-        const turtleLeftOffset = containerWidth - charSize; // 70px on desktop, 60px on mobile
+        const turtleLeftOffset = containerWidth - charSize; // Overlap offset
         eCtx.drawImage(turtleImg, containerLeft + turtleLeftOffset, containerTop, charSize, charSize);
         
         // 8. Draw Love Spark heart
         const heartX = containerLeft + (containerWidth / 2);
-        const heartY = containerTop + charSize - (width < 768 ? 18 : 22);
-        eCtx.font = `${width < 768 ? 16 : 22}px Arial`;
+        const heartY = containerTop + charSize - (width < 768 ? (height < 480 ? 12 : 14) : 22);
+        eCtx.font = `${width < 768 ? 14 : 22}px Arial`;
         eCtx.textAlign = 'center';
         eCtx.textBaseline = 'middle';
         eCtx.fillText('❤️', heartX, heartY);
@@ -968,6 +1006,12 @@ panelOpenBtn.addEventListener('click', () => {
 
 // Setup page load timeout to trigger celebration after 5 seconds
 window.addEventListener('load', () => {
+    // If mobile screen, collapse control panel by default to avoid blocking characters and animation
+    if (window.innerWidth < 768) {
+        controlPanel.classList.add('collapsed');
+        panelOpenBtn.classList.add('show');
+    }
+
     setTimeout(() => {
         // Change theme to romantic sunset
         document.body.className = '';
